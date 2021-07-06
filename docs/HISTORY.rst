@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.7.0 - Released (2021-07-06)
+-----------------------------
+
+* Ensure that any error raised during import be traped and ultimately
+  result in an import loader error being raised, such that further
+  processing on the partially loaded model may still be possible.
+
 0.6 - Released (2016-03-08)
 ---------------------------
 
