@@ -17,6 +17,7 @@ import cgrspy.bootstrap
 from cellml.api.pmr2.interfaces import ICellMLAPIUtility
 from cellml.api.pmr2.interfaces import IURLOpener
 from cellml.api.pmr2.interfaces import UnapprovedProtocolError
+from cellml.api.pmr2.interfaces import CellMLLoaderError
 
 from cellml.api.pmr2.property import singleton_property
 from cellml.api.pmr2.urlopener import DefaultURLOpener
@@ -145,6 +146,8 @@ class CellMLAPIUtility(object):
         model = self.model_loader.createFromText(model_string.decode(encoding))
         appendQueue(model_url, model)
 
+        failedq = []
+
         while len(importq):
             base, imports = importq.pop(0)
             for i in imports:
@@ -152,14 +155,17 @@ class CellMLAPIUtility(object):
                 nexturl = loader.urljoin(base, relurl)
                 try:
                     source = loader(nexturl)
-                except urllib2.URLError:
-                    # XXX silently failing, should log somewhere
+                except urllib2.URLError as e:
+                    failedq.append((e, nexturl))
                     continue
-                except UnapprovedProtocolError:
+                except UnapprovedProtocolError as e:
+                    failedq.append((e, nexturl))
                     continue
                 i.instantiateFromText(source)
                 appendQueue(nexturl, i.importedModel)
 
+        if failedq:
+            raise CellMLLoaderError(model_url, model, failedq)
         return model
 
     def serialiseNode(self, node):

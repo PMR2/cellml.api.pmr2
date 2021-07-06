@@ -8,6 +8,21 @@ class UnapprovedProtocolError(ValueError):
     """
 
 
+class CellMLLoaderError(ValueError):
+    """
+    For the loader error
+    """
+
+    def __init__(self, src, model, errors):
+        self.src = src
+        self.model = model
+        self.errors = errors
+
+    def __str__(self):
+        return '%d import loader errored while loading model from %r' % (
+            len(self.errors), self.src)
+
+
 class ICellMLAPIUtility(zope.interface.Interface):
 
     celeds_exporter = zope.schema.Dict(
