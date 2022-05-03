@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.8.0 - Released (2022-05-01)
+-----------------------------
+
+* Ensure encoding detection is also applied to imports.
+* Trap a couple pathological import cases that result in the loader not
+  halting.
+
 0.7.0 - Released (2021-07-06)
 -----------------------------
 
