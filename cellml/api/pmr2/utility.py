@@ -26,6 +26,14 @@ _root = dirname(__file__)
 resource_file = lambda *p: join(_root, 'resource', *p)
 
 
+def detect_model_encoding(model_string):
+    # workaround for lack of encoding detection regardless of input.
+    try:
+        return etree.parse(StringIO(model_string)).docinfo.encoding
+    except Exception:
+        return 'ISO-8859-1'
+
+
 class CellMLAPIUtility(object):
     """\
     A more pythonic wrapper for the CellML API Python bindings.
@@ -138,11 +146,7 @@ class CellMLAPIUtility(object):
 
         importq = []
         model_string = loader(model_url)
-        # workaround for lack of encoding detection regardless of input.
-        try:
-            encoding = etree.parse(StringIO(model_string)).docinfo.encoding
-        except:
-            encoding = 'ISO-8859-1'
+        encoding = detect_model_encoding(model_string)
         model = self.model_loader.createFromText(model_string.decode(encoding))
         appendQueue(model_url, model)
 
@@ -161,7 +165,8 @@ class CellMLAPIUtility(object):
                 except UnapprovedProtocolError as e:
                     failedq.append((e, nexturl))
                     continue
-                i.instantiateFromText(source)
+                encoding = detect_model_encoding(source)
+                i.instantiateFromText(source.decode(encoding))
                 appendQueue(nexturl, i.importedModel)
 
         if failedq:

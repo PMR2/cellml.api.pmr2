@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="unicode_import_invalid" cmeta:id="unicode_import_invalid"
+    xmlns="http://www.cellml.org/cellml/1.1#"
+    xmlns:cellml="http://www.cellml.org/cellml/1.1#"
+    xmlns:cmeta="http://www.cellml.org/metadata/1.0#"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+  <import xlink:href="unicode_invalid.cellml">
+  </import>
+</model>

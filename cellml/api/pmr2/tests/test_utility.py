@@ -134,6 +134,13 @@ class UtilityTestCase(unittest.TestCase):
         # which covers the entire range of bytes.
         self.assertEqual(model.cmetaId, 'unicode_invalid')
 
+    def test_0302_import_invalid(self):
+        model_path = get_path('unicode_import_invalid.cellml')
+        model = self.utility.loadModel(model_path, self.opener)
+        # still loads because lxml will fail and then fallback to latin1
+        # which covers the entire range of bytes.
+        self.assertEqual(model.cmetaId, 'unicode_import_invalid')
+
     def test_1000_extractMaths(self):
         model_path = get_path('beeler_reuter_1977-api-test.cellml')
         model = self.utility.loadModel(model_path, self.opener)
