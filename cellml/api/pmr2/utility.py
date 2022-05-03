@@ -145,6 +145,7 @@ class CellMLAPIUtility(object):
         assert IURLOpener.providedBy(loader)
 
         importq = []
+        imported = set()
         model_string = loader(model_url)
         encoding = detect_model_encoding(model_string)
         model = self.model_loader.createFromText(model_string.decode(encoding))
@@ -157,6 +158,11 @@ class CellMLAPIUtility(object):
             for i in imports:
                 relurl = i.xlinkHref.asText
                 nexturl = loader.urljoin(base, relurl)
+                if not relurl:
+                    failedq.append((ValueError(
+                        "no xlink:href found for import; maybe missing a "
+                        "correct xmlns:xlink declaration?"), nexturl))
+                    continue
                 try:
                     source = loader(nexturl)
                 except urllib2.URLError as e:
@@ -167,7 +173,9 @@ class CellMLAPIUtility(object):
                     continue
                 encoding = detect_model_encoding(source)
                 i.instantiateFromText(source.decode(encoding))
-                appendQueue(nexturl, i.importedModel)
+                if nexturl not in imported:
+                    appendQueue(nexturl, i.importedModel)
+                    imported.add(nexturl)
 
         if failedq:
             raise CellMLLoaderError(model_url, model, failedq)

@@ -141,6 +141,18 @@ class UtilityTestCase(unittest.TestCase):
         # which covers the entire range of bytes.
         self.assertEqual(model.cmetaId, 'unicode_import_invalid')
 
+    def test_0303_import_no_xlink(self):
+        model_path = get_path('import_no_xlink.cellml')
+        self.assertRaises(ValueError,
+            self.utility.loadModel, model_path, self.opener)
+
+    def test_0303_import_self(self):
+        model_path = get_path('import_self.cellml')
+        model = self.utility.loadModel(model_path, self.opener)
+        # since the import failure would not affect this model, the
+        # following still work
+        self.assertEqual(model.cmetaId, 'import_self')
+
     def test_1000_extractMaths(self):
         model_path = get_path('beeler_reuter_1977-api-test.cellml')
         model = self.utility.loadModel(model_path, self.opener)
