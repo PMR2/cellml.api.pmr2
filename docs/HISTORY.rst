@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8.1 - Planning (202?-??-??)
+0.8.1 - Released (2022-06-15)
 -----------------------------
 
 * Correct for component that are actually component references in the
