@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.8.1 - Planning (202?-??-??)
+-----------------------------
+
+* Correct for component that are actually component references in the
+  context of trying to extract the maths.
+
 0.8.0 - Released (2022-05-01)
 -----------------------------
 

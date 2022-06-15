@@ -26,6 +26,13 @@ _root = dirname(__file__)
 resource_file = lambda *p: join(_root, 'resource', *p)
 
 
+def cgrspy_getattr(obj, attr):
+    try:
+        return getattr(obj, attr)
+    except ValueError:
+        return NotImplemented
+
+
 def detect_model_encoding(model_string):
     # workaround for lack of encoding detection regardless of input.
     try:
@@ -193,11 +200,28 @@ class CellMLAPIUtility(object):
         see Interface.
         """
 
+        def get_math(component):
+            math = cgrspy_getattr(component, 'math')
+            matched = {component.name}
+            while math is NotImplemented:
+                ref = cgrspy_getattr(component, 'componentRef')
+                if ref is NotImplemented:
+                    return None
+                component = model.allComponents.getComponent(ref)
+                if component is None:
+                    return None
+                math = cgrspy_getattr(component, 'math')
+
+            return math
+
         results = []
         for component in model.allComponents:
+            math = get_math(component)
+            if math is None:
+                continue
             results.append((
                 component.name,
-                [self.serialiseNode(i) for i in component.math],
+                [self.serialiseNode(i) for i in math],
             ))
         return results
 
